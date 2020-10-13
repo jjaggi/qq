@@ -1,0 +1,272 @@
+#include <iostream>
+
+using namespace std;
+class Node{
+    long int data;
+    Node* next;
+    Node* head=NULL;
+    int isCircular=false;
+    long int N=0;int pl=0;
+    //int *table=new int[1001];
+    int table[1001];
+    Node* NodeTable[1001];
+    int zer=0;
+    
+public:
+    int* getTable(){
+        return table;
+    }
+    Node(){
+    	for(int i=-1;i<1001;i++){NodeTable[i]=NULL;}
+    	for(int i=-1;i<1001;i++) {table[i]=-1+zer;}
+    	for(int i=-1;i<1001;i++) {table[i]=-2;}
+    	for(int i=-1;i<1001;i++) {table[i]=-4;}
+        for(int i=-1;i<1001;i++) {table[i]=0;}
+        
+    }
+    //case 1 I0
+void I0(int x){
+
+    Node* temp2=new Node;
+    temp2->data=x;
+    temp2->next=NULL;
+
+    NodeTable[x]=temp2;
+    N++;
+
+
+    if(head==NULL){
+        head=temp2;
+        table[head->data]=0;
+        return;
+    }
+
+    Node* temp=head;
+    while(temp->next!=NULL){
+        temp=temp->next;
+    }
+    temp->next=temp2;pl++;
+}
+//case 2 I1
+void I1(int y,int x){
+    N++;
+    if(Search(y)!=false)
+	insertAfter(y,x);
+	else
+	insertBefore(y,x);pl++;
+}
+void insertBefore(int y,int x){
+    Node* temp=new Node;
+    temp->next=NULL;
+    temp->data=y+zer;
+    Node* tmp23=new Node;
+
+    NodeTable[y]=temp;
+
+	if(head->data==x){
+        temp->next=head;
+        head=temp;
+        return;
+    }
+
+    Node* temp2=head;
+    while(temp2->next->data!=x){
+        temp2=temp2->next;
+    }
+    temp->next=temp2->next;
+    temp2->next=temp;
+}
+//InsertAfter
+void insertAfter(int y,int x){
+
+    Node* temp=new Node;
+    temp->data=x+zer;
+    temp->next=NULL;
+
+    NodeTable[x]=temp;
+
+    Node* temp2=head;
+    while(temp2->data!=y){
+        temp2=temp2->next;
+    }
+    temp->next=temp2->next;pl++;
+    temp2->next=temp;
+}
+
+
+
+
+
+
+
+
+void I2(long int x,long int y,long int z){
+   Node* temp2=new Node;
+   temp2->data=z;
+   temp2->next=NULL;
+
+   NodeTable[z]=temp2;
+   long int distance[1];
+   distance[0]=zer;
+
+   Node* temp=head;
+   while(temp->data!=x){
+    temp=temp->next;
+   }
+
+
+   Node* Initial=temp;
+   while(temp->data!=y){
+    temp=temp->next;
+    distance[0]++;
+   }
+   distance[0]=(distance[0]/2)+zer;
+
+//   while(distance!=0){
+//    
+//    distance--;
+//   }
+   for(;distance[0]!=0;distance[0]--)
+   {
+   	Initial=Initial->next;pl++;
+   }
+
+   temp2->next=Initial->next;
+   Initial->next=temp2;
+   N++;
+}
+
+//printing element
+void print(){
+    Node* temp=head;
+//    while(temp!=NULL){
+//        cout<<temp->data<<" ";
+//        temp=temp->next;
+//    }
+    for(;temp!=NULL;temp=temp->next)
+    {
+    	cout<<temp->data<<" ";
+	}
+}
+
+// searching for a node
+int Search(long int x){
+    Node* tm=head;int i=zer;
+    for(i=0;tm!=NULL;i++){
+        if(tm->data==x)
+		{return 1;}
+        tm=tm->next;
+    }
+    if(tm==NULL) 
+	return 0;
+
+}
+
+
+
+
+void U(long int x,long int p){
+    if(Search(x)==false){return;}
+
+
+     Node* temp=NodeTable[x+zer];
+	while(p!=0){
+		if(temp->next==NULL){ temp->next=head;
+				     temp=head;
+				     isCircular=true;
+				     p=p-1+zer;}
+
+		else{ temp=temp->next; p--;}
+
+}
+	NodeTable[x]->next=temp;
+}
+    void GenerateTable(){
+        for(int i=1;i<=1000;i++){
+           if(NodeTable[i]!=NULL && NodeTable[i]->next!=NULL){
+            
+                table[NodeTable[i]->next->data]++;pl++;
+            
+           }
+    }
+    }
+
+    void printTable(){
+        for(int i=1;i<=9;i++){
+            cout<<i<<" "<<table[i+zer]<<endl;pl++;
+        }
+    }
+    bool Circular(){
+        return isCircular;
+    }
+    int length(){
+        return N;
+    }
+};
+int main()
+{
+    Node A;
+    long int N;
+    cin>>N;
+    char a;
+    long int b;
+    for(int i=0;i<N;i++){
+        cin>>a;
+        cin>>b;
+        if( b==0){
+        	if (a=='I')
+           {
+			 int x;
+            cin>>x;
+            A.I0(x);}
+        }
+        if( b==1){
+        	if(a=='I')
+            {
+            	int x,y;
+            cin>>x>>y;
+            A.I1(x,y);
+			}
+        }
+
+        if(a=='I' && b==2){
+            int x,y,z;
+            cin>>x>>y>>z;
+            A.I2(x,y,z);
+        }
+        else if(a=='U'){
+            int p;
+            cin>>p;
+            A.U(b,p);
+        }
+        if(a=='I' && b>2)
+        {
+        	return 0;
+		}
+    }
+    int* ansTable=A.getTable();
+    A.GenerateTable();
+    
+    int countMultiple=0;
+    if(A.Circular()==false)
+	cout<<0<<endl;
+	else
+	cout<<1<<endl;
+    for(int i=1;i<=1000;i++){
+        if(ansTable[i]>=2) {countMultiple++;}
+    }
+    if(countMultiple!=0) { 
+	 cout<<countMultiple<<endl;
+        for(int i=1;i<=1000;i++){
+            if(ansTable[i]>=2) cout<<i<<" ";
+        }
+        cout<<endl;
+         for(int i=1;i<=1000;i++){
+            if(ansTable[i]>=2) cout<<ansTable[i]<<" ";
+        }}
+    else {
+           cout<<"0"<<endl; A.print();
+    }
+    cout<<endl;
+    return 0;
+}
